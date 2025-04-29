@@ -10,9 +10,17 @@ const API_KEY = process.env.OPENROUTER_API_KEY;
 
 app.post("/chat", async (req, res) => {
   try {
+    // Asegurarnos de que estamos usando un modelo válido
+    const requestBody = { ...req.body };
+    
+    // Si no hay modelo especificado o si es "lain-protocol", usar uno válido
+    if (!requestBody.model || requestBody.model === "lain-protocol") {
+      requestBody.model = "openai/gpt-3.5-turbo";
+    }
+    
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
-      req.body,
+      requestBody,
       {
         headers: {
           "Authorization": `Bearer ${API_KEY}`,
